@@ -5,12 +5,13 @@ from django.conf import settings
 from django.utils.encoding import *
 import urllib, urllib2
 import datetime, time
-import base64, hmac, hashlib, json, sys, re
+import base64, hmac, hashlib, json, sys, re, os
 from django.templatetags.static import static
 
 #Import configurations like api key
-#Requires a file config.py with an entry apikey = "<key>"
-import config
+#Requires a env variable apikey = "<key>"
+
+apikey = os.environ['apikey']
 
 # Create your views here.
 
@@ -27,7 +28,7 @@ def fetch_data(request):
 	if projectID == '':
 		return HttpResponse("No projectID specified.")
 	url = 'https://futuhours.futurice.com/eapi/v1/hours/?format=json&project=' + str(projectID) + '&limit=0'
-	request = urllib2.Request(url, headers={"Authorization" : config.apikey})
+	request = urllib2.Request(url, headers={"Authorization" : apikey})
 	data = json.loads(urllib2.urlopen(request).read())
 
 	#Remove non billable hours if parameter is set
@@ -60,7 +61,7 @@ def fetch_user(user_url):
 	#Check if entry exists in lookup table
 	if userid in lookup_table:
 		return lookup_table[userid]
-	request = urllib2.Request(url, headers={"Authorization" : config.apikey})
+	request = urllib2.Request(url, headers={"Authorization" : apikey})
 	data = json.loads(urllib2.urlopen(request).read())
 	lookup_table[userid] = data['first_name'] + " " + data['last_name']
 	return data['first_name'] + " " + data['last_name']
