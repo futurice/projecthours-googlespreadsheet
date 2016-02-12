@@ -18,7 +18,7 @@ import config
 lookup_table = {}
 
 def fetch_data(request):
-	month = request.GET.get('month','')
+	month = request.GET.get('month','').lstrip('0')
 	year = request.GET.get('year','')
 	projectID = request.GET.get('id','')
 	billableOnly = (request.GET.get('billableOnly','')).lower()
@@ -40,7 +40,7 @@ def fetch_data(request):
 		data['objects'] = filter(lambda item: item['day'].split("-")[0] == year, data['objects'])
 	#Remove non relevant months
 	if month != '':
-		data['objects'] = filter(lambda item: item['day'].split("-")[1] == month, data['objects'])
+		data['objects'] = filter(lambda item: item['day'].split("-")[1].lstrip('0') == month, data['objects'])
 
 	for item in data['objects']:
 		output += '<tr>'
